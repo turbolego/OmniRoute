@@ -113,6 +113,7 @@ export interface ProviderFilterUrlState {
   category?: string | null;
   showFreeOnly?: boolean;
   mediaKind?: string | null;
+  hideCreditCardRequired?: boolean;
 }
 
 /**
@@ -149,6 +150,15 @@ export function syncProviderFiltersToUrl(state: ProviderFilterUrlState): void {
   setOrRemove("mode", state.displayMode && state.displayMode !== "all" ? state.displayMode : null);
   setOrRemove("cat", state.showFreeOnly ? "free" : state.category || null);
   setOrRemove("media", state.mediaKind || null);
+  if (state.hideCreditCardRequired) {
+    params.set("noCC", "1");
+    changed = true;
+  } else {
+    if (params.get("noCC") === "1") {
+      params.delete("noCC");
+      changed = true;
+    }
+  }
 
   if (changed) {
     window.history.replaceState(window.history.state, "", url.toString());
@@ -182,6 +192,10 @@ export function readProviderFiltersFromUrl(params: URLSearchParams): ProviderFil
   const media = params.get("media");
   if (media && PROVIDER_SERVICE_KIND_URL_VALUES.has(media)) {
     state.mediaKind = media;
+  }
+
+  if (params.get("noCC") === "1") {
+    state.hideCreditCardRequired = true;
   }
 
   return state;
@@ -428,7 +442,8 @@ export function filterConfiguredProviderEntries<TProvider>(
   showFreeOnly?: boolean,
   modelSearchQuery?: string,
   serviceKindFilter?: string | null,
-  liveModelsByProviderId?: LiveModelsByProviderId
+  liveModelsByProviderId?: LiveModelsByProviderId,
+  hideCreditCardRequired?: boolean
 ): ProviderEntry<TProvider>[] {
   let filtered = entries;
 
@@ -455,6 +470,13 @@ export function filterConfiguredProviderEntries<TProvider>(
     filtered = filtered.filter((entry) => {
       const provider = entry.provider as Record<string, unknown>;
       return provider.hasFree === true;
+    });
+  }
+
+  if (hideCreditCardRequired) {
+    filtered = filtered.filter((entry) => {
+      const provider = entry.provider as Record<string, unknown>;
+      return provider.requiresCreditCard !== true;
     });
   }
 

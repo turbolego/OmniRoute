@@ -47,6 +47,8 @@ interface ProviderSummaryCardProps {
   setModelSearchQuery(value: string): void;
   setSearchQuery(value: string): void;
   showFreeOnly: boolean;
+  hideCreditCardRequired: boolean;
+  onHideCreditCardRequiredChange(value: boolean): void;
   summaryStats: ProviderSummaryStats;
   t: ProviderMessageTranslator;
   tc: ProviderMessageTranslator;
@@ -102,6 +104,8 @@ export default function ProviderSummaryCard({
   setModelSearchQuery,
   setSearchQuery,
   showFreeOnly,
+  hideCreditCardRequired,
+  onHideCreditCardRequiredChange,
   summaryStats,
   t,
   tc,
@@ -308,6 +312,18 @@ export default function ProviderSummaryCard({
               {providerText(t, "clearMediaFilter", "Clear")}
             </button>
           )}
+        </div>
+
+        <div className="border-t border-border pt-3 flex flex-wrap items-center gap-2">
+          <label className="flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-medium cursor-pointer select-none transition-colors bg-bg-subtle border-border text-text-muted hover:text-text-primary hover:border-primary/30">
+            <input
+              type="checkbox"
+              checked={hideCreditCardRequired}
+              onChange={(e) => onHideCreditCardRequiredChange(e.target.checked)}
+              className="accent-primary"
+            />
+            <span>{providerText(t, "hideCreditCardRequired", "Hide CC required")}</span>
+          </label>
         </div>
       </div>
     </Card>
