@@ -5153,6 +5153,7 @@
     "freeTier": "Free Tier",
     "freeTierAvailable": "Free tier available",
     "hasFreeTooltip": "Free tier available",
+    "hideCreditCardRequired": "Hide CC required",
     "noAuthLabel": "No Auth",
     "noAuthProviders": "No Auth Providers",
     "upstreamProxyLabel": "Upstream Proxy",

@@ -245,6 +245,7 @@ export default function ProvidersPage() {
   // #4240: media-category (serviceKind) filter — composes with activeCategory,
   // search and configured-only. null = no serviceKind filter.
   const [activeServiceKind, setActiveServiceKind] = useState<string | null>(null);
+  const [hideCreditCardRequired, setHideCreditCardRequired] = useState(false);
   const notify = useNotificationStore();
   const sectionCategoryAliases: Record<string, string> = {
     cloud: "cloudagent",
@@ -281,6 +282,8 @@ export default function ProvidersPage() {
     setShowFreeOnly,
     activeServiceKind,
     setActiveServiceKind,
+    hideCreditCardRequired,
+    setHideCreditCardRequired,
   });
 
   useEffect(() => {
@@ -558,7 +561,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
 
   const rawNoAuthEntriesAll = buildStaticProviderEntries("no-auth", getProviderStats);
@@ -576,7 +580,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
 
   const apiKeyProviderEntriesAll = buildStaticProviderEntries("apikey", getProviderStats);
@@ -595,7 +600,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
   const aggregatorProviderEntriesAll = apiKeyProviderEntriesAll.filter((entry) =>
     AGGREGATOR_PROVIDER_IDS.has(entry.providerId)
@@ -607,7 +613,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
   const imageProviderEntriesAll = apiKeyProviderEntriesAll.filter((entry) =>
     IMAGE_ONLY_PROVIDER_IDS.has(entry.providerId)
@@ -619,7 +626,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
   const enterpriseProviderEntriesAll = apiKeyProviderEntriesAll.filter((entry) =>
     ENTERPRISE_CLOUD_PROVIDER_IDS.has(entry.providerId)
@@ -631,7 +639,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
   const videoProviderEntriesAll = apiKeyProviderEntriesAll.filter((entry) =>
     VIDEO_PROVIDER_IDS.has(entry.providerId)
@@ -643,7 +652,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
   const embeddingRerankProviderEntriesAll = apiKeyProviderEntriesAll.filter((entry) =>
     EMBEDDING_RERANK_PROVIDER_IDS.has(entry.providerId)
@@ -655,7 +665,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
 
   const webCookieProviderEntriesAll = buildStaticProviderEntries("web-cookie", getProviderStats);
@@ -666,7 +677,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
 
   const localProviderEntriesAll = buildStaticProviderEntries("local", getProviderStats);
@@ -677,7 +689,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
 
   const searchProviderEntriesAll = buildStaticProviderEntries("search", getProviderStats);
@@ -688,7 +701,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
 
   const audioProviderEntriesAll = buildStaticProviderEntries("audio", getProviderStats);
@@ -699,7 +713,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
 
   const cloudAgentProviderEntriesAll = buildStaticProviderEntries("cloud-agent", getProviderStats);
@@ -710,7 +725,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
 
   const upstreamProxyEntriesAll = buildStaticProviderEntries("upstream-proxy", getProviderStats);
@@ -721,7 +737,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
 
   const compatibleProviderEntriesAll = [
@@ -754,7 +771,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
 
   const staticProviderEntriesAll = dedupeProviderEntries([
@@ -780,7 +798,8 @@ export default function ProvidersPage() {
     undefined,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
 
   // IDE providers: subset of oauth/apikey providers that are editors/IDEs with
@@ -796,7 +815,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
 
   const oauthOnlyEntriesAll = oauthProviderEntriesAll
@@ -817,7 +837,8 @@ export default function ProvidersPage() {
     showFreeOnly,
     modelSearchQuery,
     activeServiceKind,
-    liveModelsByProviderId
+    liveModelsByProviderId,
+    hideCreditCardRequired
   );
 
   const compactProviderEntries = buildCompactProviderEntriesForPage({
@@ -924,6 +945,8 @@ export default function ProvidersPage() {
           setModelSearchQuery={setModelSearchQuery}
           setSearchQuery={setSearchQuery}
           showFreeOnly={showFreeOnly}
+          hideCreditCardRequired={hideCreditCardRequired}
+          onHideCreditCardRequiredChange={setHideCreditCardRequired}
           summaryStats={summaryStats}
           t={t}
           tc={tc}
