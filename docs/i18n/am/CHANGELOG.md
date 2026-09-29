@@ -1,6 +1,6 @@
 # Changelog (አማርኛ)
 
-🌐 **Languages:** 🇺🇸 [English](../../../CHANGELOG.md) · 🇸🇦 [ar](../ar/CHANGELOG.md) · 🇦🇿 [az](../az/CHANGELOG.md) · 🇧🇬 [bg](../bg/CHANGELOG.md) · 🇧🇩 [bn](../bn/CHANGELOG.md) · 🇨🇿 [cs](../cs/CHANGELOG.md) · 🇩🇰 [da](../da/CHANGELOG.md) · 🇩🇪 [de](../de/CHANGELOG.md) · 🇬🇷 [el](../el/CHANGELOG.md) · 🇪🇸 [es](../es/CHANGELOG.md) · 🇪🇪 [et](../et/CHANGELOG.md) · 🇮🇷 [fa](../fa/CHANGELOG.md) · 🇫🇮 [fi](../fi/CHANGELOG.md) · 🇫🇷 [fr](../fr/CHANGELOG.md) · 🇮🇪 [ga](../ga/CHANGELOG.md) · 🇮🇳 [gu](../gu/CHANGELOG.md) · 🇳🇬 [ha](../ha/CHANGELOG.md) · 🇮🇱 [he](../he/CHANGELOG.md) · 🇮🇳 [hi](../hi/CHANGELOG.md) · 🇭🇷 [hr](../hr/CHANGELOG.md) · 🇭🇺 [hu](../hu/CHANGELOG.md) · 🇦🇲 [hy](../hy/CHANGELOG.md) · 🇮🇩 [id](../id/CHANGELOG.md) · 🇳🇬 [ig](../ig/CHANGELOG.md) · 🇮🇹 [it](../it/CHANGELOG.md) · 🇯🇵 [ja](../ja/CHANGELOG.md) · 🇬🇪 [ka](../ka/CHANGELOG.md) · 🇰🇭 [km](../km/CHANGELOG.md) · 🇮🇳 [kn](../kn/CHANGELOG.md) · 🇰🇷 [ko](../ko/CHANGELOG.md) · 🇱🇹 [lt](../lt/CHANGELOG.md) · 🇱🇻 [lv](../lv/CHANGELOG.md) · 🇮🇳 [ml](../ml/CHANGELOG.md) · 🇮🇳 [mr](../mr/CHANGELOG.md) · 🇲🇾 [ms](../ms/CHANGELOG.md) · 🇲🇹 [mt](../mt/CHANGELOG.md) · 🇲🇲 [my](../my/CHANGELOG.md) · 🇳🇵 [ne](../ne/CHANGELOG.md) · 🇳🇱 [nl](../nl/CHANGELOG.md) · 🇳🇴 [no](../no/CHANGELOG.md) · 🇮🇳 [or](../or/CHANGELOG.md) · 🇮🇳 [pa](../pa/CHANGELOG.md) · 🇵🇭 [phi](../phi/CHANGELOG.md) · 🇵🇱 [pl](../pl/CHANGELOG.md) · 🇵🇹 [pt](../pt/CHANGELOG.md) · 🇧🇷 [pt-BR](../pt-BR/CHANGELOG.md) · 🇷🇴 [ro](../ro/CHANGELOG.md) · 🇷🇺 [ru](../ru/CHANGELOG.md) · 🇱🇰 [si](../si/CHANGELOG.md) · 🇸🇰 [sk](../sk/CHANGELOG.md) · 🇸🇮 [sl](../sl/CHANGELOG.md) · 🇷🇸 [sr](../sr/CHANGELOG.md) · 🇸🇪 [sv](../sv/CHANGELOG.md) · 🇰🇪 [sw](../sw/CHANGELOG.md) · 🇮🇳 [ta](../ta/CHANGELOG.md) · 🇮🇳 [te](../te/CHANGELOG.md) · 🇹🇭 [th](../th/CHANGELOG.md) · 🇹🇷 [tr](../tr/CHANGELOG.md) · 🇺🇦 [uk-UA](../uk-UA/CHANGELOG.md) · 🇵🇰 [ur](../ur/CHANGELOG.md) · 🇺🇿 [uz](../uz/CHANGELOG.md) · 🇻🇳 [vi](../vi/CHANGELOG.md) · 🇳🇬 [yo](../yo/CHANGELOG.md) · 🇨🇳 [zh-CN](../zh-CN/CHANGELOG.md) · 🇹🇼 [zh-TW](../zh-TW/CHANGELOG.md)
+🌐 **Languages:** 🇺🇸 [English](../../../CHANGELOG.md) · 🇸🇦 [ar](../ar/CHANGELOG.md) · 🇦🇿 [az](../az/CHANGELOG.md) · 🇧🇬 [bg](../bg/CHANGELOG.md) · 🇧🇩 [bn](../bn/CHANGELOG.md) · 🇧🇦 [bs](../bs/CHANGELOG.md) · 🇨🇿 [cs](../cs/CHANGELOG.md) · 🇩🇰 [da](../da/CHANGELOG.md) · 🇩🇪 [de](../de/CHANGELOG.md) · 🇬🇷 [el](../el/CHANGELOG.md) · 🇪🇸 [es](../es/CHANGELOG.md) · 🇪🇪 [et](../et/CHANGELOG.md) · 🇮🇷 [fa](../fa/CHANGELOG.md) · 🇫🇮 [fi](../fi/CHANGELOG.md) · 🇫🇷 [fr](../fr/CHANGELOG.md) · 🇮🇪 [ga](../ga/CHANGELOG.md) · 🇮🇳 [gu](../gu/CHANGELOG.md) · 🇳🇬 [ha](../ha/CHANGELOG.md) · 🇮🇱 [he](../he/CHANGELOG.md) · 🇮🇳 [hi](../hi/CHANGELOG.md) · 🇭🇷 [hr](../hr/CHANGELOG.md) · 🇭🇺 [hu](../hu/CHANGELOG.md) · 🇦🇲 [hy](../hy/CHANGELOG.md) · 🇮🇩 [id](../id/CHANGELOG.md) · 🇳🇬 [ig](../ig/CHANGELOG.md) · 🇮🇹 [it](../it/CHANGELOG.md) · 🇯🇵 [ja](../ja/CHANGELOG.md) · 🇬🇪 [ka](../ka/CHANGELOG.md) · 🇰🇭 [km](../km/CHANGELOG.md) · 🇮🇳 [kn](../kn/CHANGELOG.md) · 🇰🇷 [ko](../ko/CHANGELOG.md) · 🇱🇹 [lt](../lt/CHANGELOG.md) · 🇱🇻 [lv](../lv/CHANGELOG.md) · 🇮🇳 [ml](../ml/CHANGELOG.md) · 🇮🇳 [mr](../mr/CHANGELOG.md) · 🇲🇾 [ms](../ms/CHANGELOG.md) · 🇲🇹 [mt](../mt/CHANGELOG.md) · 🇲🇲 [my](../my/CHANGELOG.md) · 🇳🇵 [ne](../ne/CHANGELOG.md) · 🇳🇱 [nl](../nl/CHANGELOG.md) · 🇳🇴 [no](../no/CHANGELOG.md) · 🇮🇳 [or](../or/CHANGELOG.md) · 🇮🇳 [pa](../pa/CHANGELOG.md) · 🇵🇭 [phi](../phi/CHANGELOG.md) · 🇵🇱 [pl](../pl/CHANGELOG.md) · 🇵🇹 [pt](../pt/CHANGELOG.md) · 🇧🇷 [pt-BR](../pt-BR/CHANGELOG.md) · 🇷🇴 [ro](../ro/CHANGELOG.md) · 🇷🇺 [ru](../ru/CHANGELOG.md) · 🇱🇰 [si](../si/CHANGELOG.md) · 🇸🇰 [sk](../sk/CHANGELOG.md) · 🇸🇮 [sl](../sl/CHANGELOG.md) · 🇷🇸 [sr](../sr/CHANGELOG.md) · 🇸🇪 [sv](../sv/CHANGELOG.md) · 🇰🇪 [sw](../sw/CHANGELOG.md) · 🇮🇳 [ta](../ta/CHANGELOG.md) · 🇮🇳 [te](../te/CHANGELOG.md) · 🇹🇭 [th](../th/CHANGELOG.md) · 🇹🇷 [tr](../tr/CHANGELOG.md) · 🇺🇦 [uk-UA](../uk-UA/CHANGELOG.md) · 🇵🇰 [ur](../ur/CHANGELOG.md) · 🇺🇿 [uz](../uz/CHANGELOG.md) · 🇻🇳 [vi](../vi/CHANGELOG.md) · 🇳🇬 [yo](../yo/CHANGELOG.md) · 🇨🇳 [zh-CN](../zh-CN/CHANGELOG.md) · 🇹🇼 [zh-TW](../zh-TW/CHANGELOG.md)
 
 ---
 
@@ -93,6 +93,19 @@
 - **feat(providers):** restore the operator-owned upstream timeout tier per connection via `providerSpecificData.timeoutMs` (preempts the maintainer-only model/provider registry tiers and the global `FETCH_TIMEOUT_MS`), and make the combo per-target timeout ceiling follow the selected connection
 - **feat(cli):** run `omniroute serve --tray` as a detached desktop process after server and tray readiness, with graphical login auto-start support.
 - **feat(routing):** add client-, provider-, and model-neutral exclusive managed session connection leases with API-key-bound generation fencing, durable SQLite ownership, explicit allowlist policy, and bounded 429 capacity retry semantics.
+
+## [3.8.52] — TBD
+
+_Living section — cycle opened at the v3.8.51 freeze (parallel-cycle model). Bullets are aggregated from `changelog.d/` fragments at each `/generate-release` phase._
+
+### ✨ New Features
+
+### 🐛 Bug Fixes
+
+### 📝 Maintenance
+
+---
+
 
 ## [3.8.51] — TBD
 

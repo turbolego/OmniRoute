@@ -86,15 +86,6 @@ export function isOpencodeGoProvider(provider: string): boolean {
   );
 }
 
-export function isSenseNovaDeepSeekV4Flash(provider: string, model: string | undefined): boolean {
-  const modelStr = (model || "").toLowerCase();
-  const isDeepSeekV4Flash =
-    /(?:^|\/)deepseek-v4-flash(?:$|-)/.test(modelStr) && !modelStr.includes("vision");
-  if (!isDeepSeekV4Flash) return false;
-  if (provider === "sensenova" || provider === "snova") return true;
-  return /(?:^|\/)snova(?:\/|$)/.test(modelStr);
-}
-
 type ReasoningSanitizeLog = {
   info?: (tag: string, msg: string) => void;
 };
@@ -267,6 +258,29 @@ function writeEffortValue(
   if (c.hasOutputConfigEffort && c.outputConfig)
     next.output_config = { ...c.outputConfig, effort: value };
   return next;
+}
+
+/**
+ * The effort the outgoing body actually asks for, across all three carriers.
+ * Used by the reactive 4xx probe in `base.ts` to decide which tier to step
+ * down to, so it must report what is on the wire — not what the registry says
+ * the model supports.
+ */
+export function readBodyReasoningEffort(body: unknown): string | null {
+  if (!body || typeof body !== "object") return null;
+  const effort = readEffortCarriers(body as Record<string, unknown>).effort;
+  return typeof effort === "string" ? effort : null;
+}
+
+/**
+ * Write `value` onto every carrier the body already uses, leaving the shape of
+ * the body untouched — the reactive probe rewrites one field of the request
+ * that is already on its way upstream, so it must not reshape anything else.
+ */
+export function writeBodyReasoningEffort(body: unknown, value: string): unknown {
+  if (!body || typeof body !== "object") return body;
+  const record = body as Record<string, unknown>;
+  return writeEffortValue(record, value, readEffortCarriers(record));
 }
 
 /** Strip the effort field from every carrier that was present. */
@@ -462,40 +476,39 @@ export function sanitizeReasoningEffortForProvider(
   // Command Code rejects it outright:
   //   Validation error: Invalid option: expected one of
   //   "low"|"medium"|"high"|"xhigh"|"max" at "params.reasoning_effort"
-  // Map it to the closest supported value (`low`) for command-code only;
+  // Command Code rejects the OpenAI no-thinking carrier `none` with the same
+  // error. That matters because a `force` + `none` reasoning-routing rule now
+  // emits `reasoning_effort: "none"` (src/lib/reasoningRouting/policy.ts) so
+  // that providers whose thinking defaults ON actually turn it off.
+  // Map both to the closest supported value (`low`) for command-code only;
   // other providers (codex etc.) keep their native `minimal` handling.
-  if (isCommandCodeProvider(provider) && effortStr === "minimal") {
+  if (isCommandCodeProvider(provider) && (effortStr === "minimal" || effortStr === "none")) {
     log?.info?.(
       "REASONING_SANITIZE",
-      `${provider}/${modelStr}: mapped reasoning_effort minimal → low`
+      `${provider}/${modelStr}: mapped reasoning_effort ${effortStr} → low`
     );
     return writeEffortValue(b, "low", c);
   }
 
   // Providers and model families whose top reasoning tier is `max` natively
   // (or whose gateways expect `max` rather than OmniRoute's internal `xhigh`):
-  //   - Command Code (`command-code` / `cmd`)
   //   - Ollama Cloud (`ollama-cloud` / `ollamacloud`)
   //   - OpenCode Go (`opencode-go` / `opencode-zen` / `opencode`)
   //   - GLM 5.1+ / 6.0+ (Z.AI / Zhipu GLM-5.1, GLM-5.2, GLM-5.3, GLM-5.4...)
   //   - DeepSeek V4+ (Flash, Pro, Vision, ...)
   //   - Kimi K3+ (Moonshot AI K3, K4, ...)
   // OpenRouter (pi#4055) is excluded because OpenRouter's normalized API expects xhigh.
-  if (
-    isSenseNovaDeepSeekV4Flash(provider, modelStr) &&
-    (effortStr === "xhigh" || effortStr === "max")
-  ) {
-    log?.info?.(
-      "REASONING_SANITIZE",
-      `${provider}/${modelStr}: clamped reasoning_effort ${effortStr} to high (SenseNova DeepSeek V4 Flash ceiling)`
-    );
-    return writeEffortValue(b, "high", c);
-  }
-
+  //
+  // Command Code is deliberately NOT in this list. Its own validator advertises
+  // `low|medium|high|xhigh|max` (the quoted enum in the `minimal` mapping above),
+  // so `xhigh` is a native and distinct tier there. Rewriting it onto `max`
+  // silently spends a different reasoning level than the caller asked for, and it
+  // also overwrote the nested `reasoning.effort` carrier that the Responses path
+  // reads. Unlisted models already pass `xhigh` through unchanged below via
+  // supportsXHighEffort(); this early return used to preempt that.
   const isMaxTierTarget =
     provider !== "openrouter" &&
-    (isCommandCodeProvider(provider) ||
-      isOllamaCloudProvider(provider) ||
+    (isOllamaCloudProvider(provider) ||
       isOpencodeGoProvider(provider) ||
       MAX_TIER_REASONING_MODEL_PATTERN.test(modelStr));
 
