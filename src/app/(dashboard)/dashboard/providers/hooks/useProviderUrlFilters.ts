@@ -22,6 +22,8 @@ interface UseProviderUrlFiltersArgs {
   setShowFreeOnly: (value: boolean) => void;
   activeServiceKind: string | null;
   setActiveServiceKind: (value: string | null) => void;
+  hideCreditCardRequired: boolean;
+  setHideCreditCardRequired: (value: boolean) => void;
 }
 
 /**
@@ -50,6 +52,8 @@ export function useProviderUrlFilters({
   setShowFreeOnly,
   activeServiceKind,
   setActiveServiceKind,
+  hideCreditCardRequired,
+  setHideCreditCardRequired,
 }: UseProviderUrlFiltersArgs): { displayModePreferenceReady: boolean } {
   // Snapshot of the stored display-mode preference, read once via a lazy
   // initializer (localStorage must not be read during render). After the first
@@ -74,6 +78,7 @@ export function useProviderUrlFilters({
     setActiveCategory(urlFilters.category ?? null);
     setShowFreeOnly(urlFilters.showFreeOnly ?? false);
     setActiveServiceKind(urlFilters.mediaKind ?? null);
+    setHideCreditCardRequired(urlFilters.hideCreditCardRequired ?? false);
   }
   const displayModePreferenceReady = hydratedFromParams !== null;
   const filtersHydrated = displayModePreferenceReady;
@@ -87,6 +92,7 @@ export function useProviderUrlFilters({
       category: activeCategory,
       showFreeOnly,
       mediaKind: activeServiceKind,
+      hideCreditCardRequired,
     });
   }, [
     filtersHydrated,
@@ -97,6 +103,7 @@ export function useProviderUrlFilters({
     activeCategory,
     showFreeOnly,
     activeServiceKind,
+    hideCreditCardRequired,
   ]);
 
   return { displayModePreferenceReady };

@@ -250,6 +250,7 @@ function ProvidersPageContent() {
   const [testingMode, setTestingMode] = useState<string | null>(null);
   const [testResults, setTestResults] = useState<any>(null);
   const [providerDisplayMode, setProviderDisplayMode] = useState<ProviderDisplayMode>("all");
+  const [hideCreditCardRequired, setHideCreditCardRequired] = useState(false);
   const [oauthEnvRepairStatus, setOauthEnvRepairStatus] = useState<{
     available: boolean;
     missingCount: number;
@@ -302,6 +303,8 @@ function ProvidersPageContent() {
     setShowFreeOnly,
     activeServiceKind,
     setActiveServiceKind,
+    hideCreditCardRequired,
+    setHideCreditCardRequired,
   });
 
   useEffect(() => {
@@ -576,7 +579,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
 
   const rawNoAuthEntriesAll = buildStaticProviderEntries("no-auth", getProviderStats);
@@ -595,7 +599,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
 
   const apiKeyProviderEntriesAll = buildStaticProviderEntries("apikey", getProviderStats);
@@ -608,7 +613,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
   const aggregatorProviderEntriesAll = apiKeyProviderEntriesAll.filter((entry) =>
     AGGREGATOR_PROVIDER_IDS.has(entry.providerId)
@@ -621,7 +627,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
   const imageProviderEntriesAll = apiKeyProviderEntriesAll.filter((entry) =>
     IMAGE_ONLY_PROVIDER_IDS.has(entry.providerId)
@@ -634,7 +641,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
   const enterpriseProviderEntriesAll = apiKeyProviderEntriesAll.filter((entry) =>
     ENTERPRISE_CLOUD_PROVIDER_IDS.has(entry.providerId)
@@ -647,7 +655,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
   const videoProviderEntriesAll = apiKeyProviderEntriesAll.filter((entry) =>
     VIDEO_PROVIDER_IDS.has(entry.providerId)
@@ -660,7 +669,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
   const embeddingRerankProviderEntriesAll = apiKeyProviderEntriesAll.filter((entry) =>
     EMBEDDING_RERANK_PROVIDER_IDS.has(entry.providerId)
@@ -673,7 +683,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
 
   const webCookieProviderEntriesAll = buildStaticProviderEntries("web-cookie", getProviderStats);
@@ -685,7 +696,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
 
   const localProviderEntriesAll = buildStaticProviderEntries("local", getProviderStats);
@@ -697,7 +709,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
 
   const searchProviderEntriesAll = buildStaticProviderEntries("search", getProviderStats);
@@ -709,7 +722,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
 
   const audioProviderEntriesAll = buildStaticProviderEntries("audio", getProviderStats);
@@ -721,7 +735,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
 
   const cloudAgentProviderEntriesAll = buildStaticProviderEntries("cloud-agent", getProviderStats);
@@ -733,7 +748,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
 
   const upstreamProxyEntriesAll = buildStaticProviderEntries("upstream-proxy", getProviderStats);
@@ -745,7 +761,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
 
   const compatibleProviderEntriesAll = [
@@ -779,7 +796,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
 
   const staticProviderEntriesAll = dedupeProviderEntries([
@@ -806,7 +824,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
 
   // IDE providers: subset of oauth/apikey providers that are editors/IDEs with
@@ -823,7 +842,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
 
   const oauthOnlyEntriesAll = oauthProviderEntriesAll
@@ -845,7 +865,8 @@ function ProvidersPageContent() {
     modelSearchQuery,
     activeServiceKind,
     liveModelsByProviderId,
-    connections
+    connections,
+    hideCreditCardRequired
   );
   const visibleWebFetchEntries = resolveVisibleWebFetchEntries(webFetchEntries, activeCategory);
 
@@ -954,6 +975,8 @@ function ProvidersPageContent() {
           setModelSearchQuery={setModelSearchQuery}
           setSearchQuery={setSearchQuery}
           showFreeOnly={showFreeOnly}
+          hideCreditCardRequired={hideCreditCardRequired}
+          onHideCreditCardRequiredChange={setHideCreditCardRequired}
           summaryStats={summaryStats}
           t={t}
           tc={tc}
