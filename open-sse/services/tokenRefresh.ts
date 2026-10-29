@@ -11,13 +11,17 @@
 // importers (open-sse/index.ts, executors, src/sse/services/tokenRefresh.ts,
 // tests) keep a stable surface.
 import { AsyncLocalStorage } from "node:async_hooks";
+export { isPassiveCodex } from "./tokenRefresh/passiveCodex.ts";
+import { isPassiveCodex, resolvePassiveCodex } from "./tokenRefresh/passiveCodex.ts";
 import { PROVIDERS } from "../config/constants.ts";
 import { getCodexAuthIdentityHeaders } from "../config/codexClient.ts";
 import { runWithProxyContext } from "../utils/proxyFetch.ts";
 import { serializeRefresh } from "./refreshSerializer.ts";
+import { parseTokenExpiryMs } from "@/lib/tokenHealthCheckExpiry";
 import {
   extractOAuthErrorCode,
   isUnrecoverableRefreshError,
+  NO_REFRESH_NEEDED,
   type RefreshLogger,
 } from "./tokenRefresh/shared.ts";
 import {
@@ -40,6 +44,8 @@ import {
   refreshWithRetry,
 } from "./tokenRefresh/circuitBreaker.ts";
 import { refreshCodebuddyCnToken } from "./tokenRefresh/providers/codebuddyCn.ts";
+import { refreshCodebuddyIntlToken } from "./tokenRefresh/providers/codebuddyIntl.ts";
+import { refreshWorkbuddyToken } from "./tokenRefresh/providers/workbuddy.ts";
 import { refreshClineToken } from "./tokenRefresh/providers/cline.ts";
 import { refreshKimiCodingToken } from "./tokenRefresh/providers/kimiCoding.ts";
 import { refreshMuseCodeToken } from "./tokenRefresh/providers/museCode.ts";
@@ -77,6 +83,7 @@ export {
   refreshCopilotToken,
   extractOAuthErrorCode,
   isUnrecoverableRefreshError,
+  NO_REFRESH_NEEDED,
   isProviderBlocked,
   getCircuitBreakerStatus,
   refreshWithRetry,
@@ -240,10 +247,15 @@ export function getActiveOnPersist(): RefreshPersistFn | undefined {
 // ./tokenRefresh/shared.ts (imported above, re-exported below) — used both by
 // the generic orchestrator below and by every per-provider refresh module.
 
+export function refreshAccessToken(provider, token, creds, log, proxy: unknown = null) {
+  if (isPassiveCodex(provider)) return resolvePassiveCodex(creds);
+  return refreshActiveAccessToken(provider, token, creds, log, proxy);
+}
+
 /**
  * Refresh OAuth access token using refresh token
  */
-export async function refreshAccessToken(
+async function refreshActiveAccessToken(
   provider,
   refreshToken,
   credentials,
@@ -471,6 +483,12 @@ async function _getAccessTokenInternal(provider, credentials, log, proxyConfig: 
     case "codebuddy-cn":
       return await refreshCodebuddyCnToken(credentials.refreshToken, log, proxyConfig);
 
+    case "codebuddy-intl":
+      return await refreshCodebuddyIntlToken(credentials.refreshToken, log, proxyConfig);
+
+    case "workbuddy":
+      return await refreshWorkbuddyToken(credentials.refreshToken, log, proxyConfig);
+
     default:
       // Fallback to generic OAuth refresh for unknown providers
       return refreshAccessToken(provider, credentials.refreshToken, credentials, log, proxyConfig);
@@ -502,6 +520,8 @@ export function supportsTokenRefresh(provider) {
     // testStatus="expired" / errorCode="no_refresh_token".
     "gitlab-duo",
     "codebuddy-cn",
+    "codebuddy-intl",
+    "workbuddy",
     "cursor",
   ]);
   if (explicitlySupported.has(provider)) return true;
@@ -540,6 +560,7 @@ export async function getAccessToken(
   proxyConfig: unknown = null,
   onPersist?: RefreshPersistFn
 ) {
+  if (isPassiveCodex(provider)) return resolvePassiveCodex(credentials);
   if (!credentials || !credentials.refreshToken || typeof credentials.refreshToken !== "string") {
     log?.warn?.("TOKEN_REFRESH", `No valid refresh token available for provider: ${provider}`);
     return null;
@@ -634,12 +655,7 @@ export async function getAccessToken(
   // the legacy `connectionId`-less path would silently swallow the callback,
   // leaving DB rows out of sync with rotated tokens (Codex/OpenAI). We still
   // resolve the promise to all waiters with the refreshed credentials.
-  const refreshPromise = _getAccessTokenWithStalenessCheck(
-    provider,
-    credentials,
-    log,
-    proxyConfig
-  )
+  const refreshPromise = _getAccessTokenWithStalenessCheck(provider, credentials, log, proxyConfig)
     .then(async (result) => {
       if (result?.accessToken && effectiveOnPersist) {
         // #4038: same compare-and-swap guard as Layer 1 — skip the persist if a concurrent
@@ -704,7 +720,7 @@ async function _refreshWithFreshCredentials(provider, credentials, log, proxyCon
       const dbConnection = await getProviderConnectionById(credentials.connectionId);
       if (dbConnection && dbConnection.refreshToken) {
         const now = Date.now();
-        const dbExpiresAt = dbConnection.expiresAt ? new Date(dbConnection.expiresAt).getTime() : 0;
+        const dbExpiresAt = parseTokenExpiryMs(dbConnection.expiresAt);
 
         if (dbConnection.refreshToken !== credentials.refreshToken) {
           log?.info?.(

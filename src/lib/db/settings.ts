@@ -22,6 +22,7 @@ import { DEFAULT_RESPONSES_PREVIOUS_RESPONSE_ID_MODE } from "@/shared/constants/
 import { decodeUserinfo } from "@/shared/utils/decodeUserinfo";
 import { type JsonRecord, toRecord } from "./settings/shared";
 import { resolveNoAuthSharedProviderProxy } from "./settings/noAuthProxyFallback";
+import { PROXY_BULK_IMPORT_LIMIT_DEFAULT } from "@/shared/constants/proxyBulkImport";
 
 type ProxyValue = JsonRecord | string | null;
 type ProxyResolutionResult = {
@@ -153,14 +154,19 @@ export async function getSettings() {
   const db = getDbInstance();
   const rows = db.prepare("SELECT key, value FROM key_value WHERE namespace = 'settings'").all();
   const settings: Record<string, unknown> = {
-    cloudEnabled: true,
+    cloudEnabled: false,
     tailscaleEnabled: false,
     tailscaleUrl: "",
     stickyRoundRobinLimit: 3,
     disableSessionStickiness: false,
     // Global connection-aware expansion fallback for group-B combo strategies is opt-in.
     connectionAwareExpansion: false,
+    // Keep combo targets whose known output ceiling is below the request's
+    // max_tokens instead of treating output_tokens as a hard compatibility
+    // mismatch; the upstream then applies its own ceiling.
+    outputLimitAdvisory: false,
     promptCacheAffinityEnabled: true,
+    geminiPromptCacheMode: "off",
     comboStrategy: "fallback",
     comboStickyRoundRobinLimit: null, // null = inherit stickyRoundRobinLimit (a literal default here shadows the documented batched-rotation default of 3 — #6678 regression caught by the v3.8.47 release CI)
     providerStrategies: {},
@@ -170,6 +176,9 @@ export async function getSettings() {
     // ProviderLimits/utils.tsx) — this is a personal view preference, not an
     // admin model-catalog edit. Ported from upstream decolua/9router#2371.
     quotaVisibility: {},
+    // #13917: operator-configurable ceiling for POST /api/settings/proxies/bulk-import.
+    // Resolved through resolveProxyBulkImportLimit at both enforcement points.
+    proxyBulkImportLimit: PROXY_BULK_IMPORT_LIMIT_DEFAULT,
     requestRetry: 3,
     maxRetryIntervalSec: 30,
     antigravitySignatureCacheMode: "enabled",
@@ -182,6 +191,7 @@ export async function getSettings() {
     oidcScopes: ["openid", "profile", "email"],
     oidcRedirectPath: "/api/auth/oidc/callback",
     oidcAllowedSubjects: [], // optional sub or email whitelist
+    oidcAdmissionClaim: null, // optional ID-token role/group admission policy
     mcpEnabled: false,
     a2aEnabled: false,
     hiddenSidebarItems: [],
@@ -210,6 +220,7 @@ export async function getSettings() {
       enabled: false,
       supportedModels: [
         "claude-fable-5",
+        "claude-opus-5-5",
         "claude-opus-5",
         "claude-opus-4-8",
         "claude-opus-4-7",
@@ -255,13 +266,18 @@ export async function getSettings() {
     // live hard-stop-guaranteed quota check for non-keyless free candidates.
     // See open-sse/services/autoCombo/strictZeroCostFilter.ts.
     freeAccessPolicy: "off",
-    excludeTosAvoid: false,
+    // #15059: ON by default — providers whose curated verdict is `tos: "avoid"` (e.g. Antigravity)
+    // must not receive `auto` traffic on a fresh install. Opt out with PATCH /api/settings.
+    excludeTosAvoid: true,
     // #9418: Opt-in filter that hides auto/* virtual combos from the /v1/models catalog.
     // User-defined combos are unaffected; routing still works for hidden ids sent explicitly.
     hideAutoCombos: false,
     // #9418: Opt-in filter that hides no-think/* gateway variants from the /v1/models catalog.
     // Routing still works for hidden ids sent explicitly.
     hideNoThinkVariants: false,
+    // Opt-in: the public /v1/models listing advertises only combos (user combos +
+    // auto/*). Catalog-only — explicit provider/model ids still route.
+    exposeCombosOnly: false,
     // #11481: Opt-in explicit model exposure allow/deny list, mirrored into the
     // auto/* combo candidate pool (open-sse/services/autoCombo/modelExposureFilter.ts)
     // so a denied model can't sneak back in via combo routing — the same trap
@@ -279,6 +295,10 @@ export async function getSettings() {
     codexAutoPing: { connections: {} },
     // #8848: opt-in per-connection Claude proactive warmup (empty = off for everyone).
     claudeWarmup: { connections: {} },
+    // Operator-set CLI client-version overrides for the Claude Code / Codex
+    // identity presets (src/shared/constants/cliVersions.ts). Empty record = no
+    // override: resolution falls back to the env var, then the captured pin.
+    cliVersionOverrides: {},
   };
   for (const row of rows) {
     const record = toRecord(row);
@@ -793,7 +813,7 @@ export async function resolveProxyForConnection(
     }
   }
 
-  // Step 8.5 (#6272): no-auth providers (mimocode, opencode, ...) share a single
+  // Step 8.5 (#6272): no-auth providers share a single
   // synthetic connectionId that never matches a `provider_connections` row, so
   // `connectionRecord` above is null and Steps 5-8 (which require it) never run for
   // them — a provider-level proxy assigned to a no-auth provider was silently
