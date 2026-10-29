@@ -5629,6 +5629,7 @@
     "expiringSoonBadge": "Expiring Soon",
     "freeTier": "Free Tier",
     "freeTierAvailable": "Free tier available",
+    "hideCreditCardRequired": "Hide CC required",
     "hasFreeTooltip": "Free tier available",
     "noAuthLabel": "No Auth",
     "noAuthProviders": "No Auth Providers",

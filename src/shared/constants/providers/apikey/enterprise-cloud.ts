@@ -106,6 +106,7 @@ export const APIKEY_PROVIDERS_ENTERPRISE = {
     apiHint:
       "Modal commonly serves user-hosted OpenAI-compatible apps on /v1. OmniRoute will probe /v1/models and route chat traffic to /v1/chat/completions.",
     hasFree: true,
+    requiresCreditCard: true,
     freeNote: "$30/month free credits for new accounts",
     passthroughModels: true,
   },
@@ -158,6 +159,7 @@ export const APIKEY_PROVIDERS_ENTERPRISE = {
     textIcon: "SCW",
     website: "https://www.scaleway.com/en/docs/ai-data/generative-apis/",
     hasFree: true,
+    requiresCreditCard: true,
     freeNote: "1M free tokens for new accounts — EU/GDPR compliant (Paris), Qwen3 235B & Llama 70B",
   },
   ovhcloud: {
